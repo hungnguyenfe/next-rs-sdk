@@ -1,0 +1,50 @@
+{
+  "name": "plat-next-rs-sdk",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "format": "prettier --write 'src/**/*.{vue,js,ts}'"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
+    "@storybook/addon-storysource": "^7.5.3",
+    "@storybook/client-api": "^7.4.6",
+    "@tanstack/vue-query": "^4.35.7",
+    "@vueuse/core": "^10.4.1",
+    "axios": "^1.5.1",
+    "date-fns": "^2.30.0",
+    "echarts": "^5.4.3",
+    "element-plus": "^2.3.14",
+    "expr-eval": "^2.0.2",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "nanoid": "^5.0.2",
+    "numbro": "^2.4.0",
+    "smooth-dnd": "^0.12.1",
+    "type-fest": "^4.4.0",
+    "vue": "^3.2.47"
+  },
+  "devDependencies": {
+    "@storybook/addon-essentials": "^7.5.0-alpha.4",
+    "@storybook/addon-interactions": "^7.5.0-alpha.4",
+    "@storybook/addon-links": "^7.5.0-alpha.4",
+    "@storybook/blocks": "^7.5.0-alpha.4",
+    "@storybook/testing-library": "^0.2.2-next.0",
+    "@storybook/vue3": "^7.5.0-alpha.4",
+    "@storybook/vue3-vite": "^7.5.0-alpha.4",
+    "prettier": "^3.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sass": "^1.68.0",
+    "storybook": "^7.5.0-alpha.4",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.2",
+    "vue-tsc": "^1.4.2"
+  }
+}
