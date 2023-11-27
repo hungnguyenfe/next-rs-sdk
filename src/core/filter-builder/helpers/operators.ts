@@ -1,7 +1,7 @@
 import { ColumnTypeEnum, SdkOperator } from '@/shared/types/sdk.ts'
 import { isArray } from 'lodash'
 import { isDateString, isNumber, isString } from '@/shared/helpers/validate.ts'
-import { getExpression } from '@/shared/composables/expression.ts'
+import { getExpression } from '@/shared/helpers/expression.ts'
 
 export interface OperatorOption {
 	label: string

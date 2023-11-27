@@ -2,15 +2,18 @@ import '@/assets/style.scss'
 import { Meta, StoryObj } from '@storybook/vue3'
 import { useArgs } from '@storybook/client-api'
 import { computed } from 'vue'
-import { getColumnsDSIdReportingSdk } from '@/stories/common/common.ts'
-import { defaultSdkQuery } from '@/shared/helpers'
+import { useStories } from '@/stories/common/common.ts'
+import { defaultSdkElementColumns, defaultSdkQuery } from '@/shared/helpers'
 import { SdkFeatureDropdownListEnum } from '@/common/features/type.ts'
-import SdkTable from '@/core/table/SdkTable.vue'
-import SdkConfigProvider, {
-	SDKProviderProps,
-} from '@/core/config-provider/SdkConfigProvider.vue'
 import { defaultFilterBuilderConfig } from '@/shared/helpers/filter.ts'
-import { SdkAggregationType, SdkOperator } from '@/shared/types/sdk.ts'
+import {
+	ColumnTypeEnum,
+	SdkAggregationType,
+	SdkOperator,
+} from '@/shared/types/sdk.ts'
+import { SdkFormatType } from '@/services/format'
+import SdkTable from '@/core/table/SdkTable.vue'
+import SdkConfigProvider from '@/core/config-provider/SdkConfigProvider.vue'
 
 const meta: Meta = {
 	component: SdkTable,
@@ -24,7 +27,6 @@ const meta: Meta = {
 			control: 'boolean',
 			table: { category: 'Table Props' },
 		},
-		showFilter: { control: 'boolean', table: { category: 'Table Props' } },
 		rowCellClass: { control: 'text', table: { category: 'Table Props' } },
 		colCellClass: { control: 'text', table: { category: 'Table Props' } },
 		features: { control: 'object', table: { category: 'Table Props' } },
@@ -46,13 +48,149 @@ const meta: Meta = {
 		},
 	},
 	args: {
+		columns: defaultSdkElementColumns([
+			{
+				name: 'Region',
+				title: 'Region',
+				type: ColumnTypeEnum.Text,
+				sortable: true,
+			},
+			{
+				name: 'Country',
+				title: 'Country',
+				type: ColumnTypeEnum.Text,
+				sortable: true,
+			},
+			{
+				name: 'Item Type',
+				title: 'Item Type',
+				type: ColumnTypeEnum.Text,
+				sortable: true,
+			},
+			{
+				name: 'Sales Channel',
+				title: 'Sales Channel',
+				type: ColumnTypeEnum.Text,
+			},
+			{
+				name: 'Order Priority',
+				title: 'Order Priority',
+				type: ColumnTypeEnum.Text,
+			},
+			{
+				name: 'Order Date',
+				title: 'Order Date',
+				type: ColumnTypeEnum.Date,
+				width: 200,
+				autoWidth: false,
+				format: {
+					type: SdkFormatType.Temporal,
+				},
+				sortable: true,
+			},
+			{ name: 'Order ID', title: 'Order ID', type: ColumnTypeEnum.Text },
+			{
+				name: 'Ship Date',
+				title: 'Ship Date',
+				type: ColumnTypeEnum.Date,
+				width: 200,
+				autoWidth: false,
+				format: {
+					type: SdkFormatType.Temporal,
+				},
+				sortable: true,
+			},
+			{
+				name: 'Units Sold',
+				title: 'Units Sold',
+				type: ColumnTypeEnum.Number,
+				format: {
+					type: SdkFormatType.Numeric,
+					config: {
+						thousandSeparated: true,
+					},
+				},
+				sortable: true,
+			},
+			{
+				name: 'Unit Price',
+				title: 'Unit Price',
+				type: ColumnTypeEnum.Number,
+				format: {
+					type: SdkFormatType.Numeric,
+					common: { prefix: '$' },
+					config: {
+						thousandSeparated: true,
+					},
+				},
+				sortable: true,
+			},
+			{
+				name: 'Unit Cost',
+				title: 'Unit Cost',
+				type: ColumnTypeEnum.Number,
+				format: {
+					type: SdkFormatType.Numeric,
+					common: { prefix: '$' },
+					config: {
+						thousandSeparated: true,
+					},
+				},
+				sortable: true,
+			},
+			{
+				name: 'Total Revenue',
+				title: 'Total Revenue',
+				type: ColumnTypeEnum.Number,
+				width: 150,
+				autoWidth: false,
+				format: {
+					type: SdkFormatType.Numeric,
+					common: { prefix: '$' },
+					config: {
+						thousandSeparated: true,
+					},
+				},
+				sortable: true,
+			},
+			{
+				name: 'Total Cost',
+				title: 'Total Cost',
+				type: ColumnTypeEnum.Number,
+				width: 150,
+				autoWidth: false,
+				format: {
+					type: SdkFormatType.Numeric,
+					common: { prefix: '$' },
+					config: {
+						thousandSeparated: true,
+					},
+				},
+				sortable: true,
+			},
+			{
+				name: 'Total Profit',
+				title: 'Total Profit',
+				type: ColumnTypeEnum.Number,
+				width: 150,
+				autoWidth: false,
+				format: {
+					type: SdkFormatType.Numeric,
+					common: { prefix: '$' },
+					config: {
+						thousandSeparated: true,
+					},
+				},
+				sortable: true,
+			},
+		]),
+		query: defaultSdkQuery({}),
 		title: 'Table Sdk v2',
 		dataSource: 'idreportingsdk',
 		features: [],
 		height: 'auto',
 		minHeight: 300,
 		showPagination: true,
-		showFilter: false,
 		rowCellClass: '',
 		colCellClass: '',
 	},
@@ -77,9 +215,7 @@ const meta: Meta = {
 						:col-cell-class="props.collCellClass"
 						:row-cell-class="props.rowCellClass"
 						:features="props.features"
-						:show-filter="props.showFilter"
 						:show-pagination="props.showPagination"
-						:show-sort="props.showSort"
 						:filter-config="props.filterConfig"
 						@update:columns="updateProps({ columns: $event })"
 						@update:query="updateProps({ query: $event })"
@@ -87,27 +223,11 @@ const meta: Meta = {
 				</sdk-config-provider>
 			`,
 			setup() {
-				const props = computed(() => ({ ...args }))
-				const handleRequestConfigs = computed<
-					SDKProviderProps['handleRequestConfigs']
-				>(() => (config) => {
-					config.headers = config.headers || {}
-					if (args.clientId) {
-						config.headers['x-ps-client-id'] = args.clientId
-						config.headers.Authorization = 'Bearer ' + args.token
-					} else {
-						config.headers.Authorization = args.token || ''
-					}
-					return config
-				})
-				const updateProps = (partialArgs: any) => {
-					updateArgs({ ...args, ...partialArgs })
-				}
-				return {
-					props,
-					updateProps,
-					handleRequestConfigs,
-				}
+				const { props, updateProps, handleRequestConfigs } = useStories(
+					computed(() => args),
+					computed(() => updateArgs),
+				)
+				return { props, updateProps, handleRequestConfigs }
 			},
 		}
 	},
@@ -118,12 +238,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 // @ts-ignore
-export const Default: Story = {
-	args: {
-		query: defaultSdkQuery({}),
-		columns: getColumnsDSIdReportingSdk(),
-	},
-}
+export const Default: Story = {}
 
 export const Grouping: Story = {
 	args: {
@@ -199,15 +314,12 @@ export const Grouping: Story = {
 				],
 			},
 		}),
-		columns: getColumnsDSIdReportingSdk(),
 	},
 }
 
 export const WithColumnFeatures: Story = {
 	args: {
-		query: defaultSdkQuery({}),
 		features: [SdkFeatureDropdownListEnum.ColumnManager],
-		columns: getColumnsDSIdReportingSdk(),
 	},
 }
 
@@ -231,7 +343,6 @@ export const WithFilterFeatures: Story = {
 				],
 			},
 		}),
-		columns: getColumnsDSIdReportingSdk(),
 		filterConfig: defaultFilterBuilderConfig({
 			Region: {
 				type: 'select',
@@ -280,8 +391,6 @@ export const WithFilterFeatures: Story = {
 export const WithFilterAdvanceFeatures: Story = {
 	args: {
 		features: [SdkFeatureDropdownListEnum.FilterBuilderAdvance],
-		query: defaultSdkQuery({}),
-		columns: getColumnsDSIdReportingSdk(),
 		filterConfig: defaultFilterBuilderConfig({
 			Region: {
 				type: 'select',

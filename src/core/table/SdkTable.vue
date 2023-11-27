@@ -1,21 +1,14 @@
 <script setup lang="ts">
 import SdkFeatureDropdown from '@/common/features/SdkFeatureDropdown.vue'
+import { computed, nextTick, onMounted, ref, toRefs, watch } from 'vue'
 import {
-	computed,
-	inject,
-	InjectionKey,
-	nextTick,
-	onMounted,
-	ref,
-	toRef,
-	toRefs,
-	watch,
-} from 'vue'
-import { useElementDataSource } from '@/shared/composables/element.ts'
+	SdkElementProps,
+	useElementContext,
+	useElementDataSource,
+} from '@/shared/composables/element.ts'
 import { useDataTable } from '@/core/table/composables/datatable.ts'
 import { onResizeEvent } from '@/core/table/events/resize.event.ts'
 import {
-	SdkContext,
 	SdkElementColumnConfig,
 	SdkFilterBuilderConfig,
 	SdkFilterGroupType,
@@ -34,17 +27,14 @@ import { Sort, SortDown, SortUp, View } from '@element-plus/icons-vue'
 import SdkGroupTable from '@/core/table/SdkGroupTable.vue'
 import SdkAggregations from '@/common/aggregations/SdkAggregations.vue'
 
-export interface SdkTableProps {
-	namespace: InjectionKey<SdkContext>
+export interface SdkTableProps extends SdkElementProps {
 	columns: SdkElementColumnConfig[]
-	dataSource: string
 	query: SdkQuery
 	filterConfig?: SdkFilterBuilderConfig
 	features?: SdkFeatureDropdownListEnum[]
 	height?: number | 'auto'
 	minHeight?: number
 	showPagination?: boolean
-	showFilter?: boolean
 	rowCellClass?: string
 	colCellClass?: string
 	title?: string
@@ -59,7 +49,6 @@ const props = withDefaults(defineProps<SdkTableProps>(), {
 	height: 'auto',
 	minHeight: 300,
 	showPagination: true,
-	showFilter: false,
 	rowCellClass: '',
 	colCellClass: '',
 })
@@ -72,25 +61,15 @@ const emits = defineEmits<{
 	(e: 'update:grouping', pagination: SdkQuery['group']): void
 }>()
 
-// Validate namespace and inject context
-if (!props.namespace)
-	throw new Error('SDK Table component required namespace prop')
-
-if (!props.dataSource)
-	throw new Error('SDK Table component required datasource prop')
-
-const context = inject(props.namespace)!
-if (!context)
-	throw new Error('Invalid namespace cause inject context is undefined')
+const context = useElementContext(props)
 
 // Binding Data Props
-const datasource = toRef(props, 'dataSource')
-const { columns, query } = toRefs(props)
+const { columns, query, dataSource } = toRefs(props)
 
 // Query data
 const { data, isLoading } = useElementDataSource(
 	context,
-	datasource,
+	dataSource,
 	query,
 	computed(
 		() =>

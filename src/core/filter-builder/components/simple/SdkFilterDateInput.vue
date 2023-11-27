@@ -10,7 +10,7 @@ import { isArray } from 'lodash'
 import {
 	expressions as expressionList,
 	getExpression,
-} from '@/shared/composables/expression.ts'
+} from '@/shared/helpers/expression.ts'
 
 const props = defineProps<BaseInputProps<string | [string, string]>>()
 const emits = defineEmits<BaseInputEmits<string | [string, string]>>()

@@ -35,6 +35,7 @@ export interface DsColumn {
 		label: string
 		name: string
 		type: string
+		alias: string
 	}>
 }
 
@@ -166,6 +167,7 @@ export interface SdkSort {
 }
 
 export interface SdkQuery {
+	fields: Array<{ name: string }>
 	group: { columns: SdkGroupColumn[]; aggregations: SdkAggregation[] }
 	filter: SdkFilterGroupType
 	pagination: SdkPagination
